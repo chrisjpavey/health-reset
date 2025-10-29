@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Health Reset">
+    <meta name="theme-color" content="#667eea">
+    
+    <title>Health Reset - 6 Week Plan</title>
+    
+    <!-- iOS Icons -->
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="icon" type="image/png" href="icon-192.png">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            padding-bottom: 80px;
+        }
+        
+        .container {
+            max-width: 100%;
+            background: white;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 15px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 {
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
+        
+        .streak-counter {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .streak-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            display: block;
+            margin: 5px 0;
+        }
+        
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+            position: sticky;
+            top: 0;
+            z-index: 99;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 15px 5px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            background: transparent;
+            font-size: 0.85em;
+            touch-action: manipulation;
+        }
+        
+        .tab:active {
+            background: rgba(102, 126, 234, 0.1);
+        }
+        
+        .tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 15px;
+            padding-bottom: 40px;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .checklist-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 10px;
+            display: flex;
+            align-items: flex-start;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            touch-action: manipulation;
+        }
+        
+        .checklist-item:active {
+            transform: scale(0.98);
+        }
+        
+        .checklist-item.completed {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+        
+        .checkbox-wrapper {
+            margin-right: 12px;
+            padding-top: 3px;
+            flex-shrink: 0;
+        }
+        
+        .checkbox {
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+        
+        .item-content {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .item-title {
+            font-weight: 600;
+            font-size: 1em;
+            margin-bottom: 5px;
+            color: #333;
+            line-height: 1.3;
+        }
+        
+        .item-details {
+            color: #666;
+            font-size: 0.85em;
+            line-height: 1.4;
+        }
+        
+        .priority {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.7em;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+        
+        .priority.critical {
+            background: #ff6b6b;
+            color: white;
+        }
+        
+        .priority.high {
+            background: #ffa500;
+            color: white;
+        }
+        
+        .priority.medium {
+            background: #4ecdc4;
+            color: white;
+        }
+        
+        .section-header {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin: 25px 0 15px 0;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-header::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: #667eea;
+            margin-right: 10px;
+            border-radius: 2px;
+        }
+        
+        .shopping-category {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .shopping-category h3 {
+            margin-bottom: 12px;
+            color: #667eea;
+            font-size: 1.1em;
+        }
+        
+        .shopping-category ul {
+            list-style: none;
+        }
+        
+        .shopping-category li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+            font-size: 0.9em;
+        }
+        
+        .shopping-category li:last-child {
+            border-bottom: none;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 40px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        .week-overview {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .week-overview h3 {
+            color: #667eea;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+        }
+        
+        .week-overview ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .week-overview li {
+            padding: 6px 0 6px 20px;
+            position: relative;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+        
+        .week-overview li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            margin: 10px 5px;
+            transition: all 0.3s;
+            width: calc(100% - 10px);
+            touch-action: manipulation;
+        }
+        
+        .button:active {
+            transform: scale(0.98);
+            opacity: 0.8;
+        }
+        
+        .button.reset {
+            background: #dc3545;
+        }
+        
+        .button.complete {
+            background: #28a745;
+        }
+        
+        .info-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+        
+        .info-box strong {
+            display: block;
+            margin-bottom: 5px;
+            color: #856404;
+        }
+        
+        /* Bottom navigation safe area for iPhone */
+        @supports(padding-bottom: env(safe-area-inset-bottom)) {
+            body {
+                padding-bottom: calc(80px + env(safe-area-inset-bottom));
+            }
+        }
+        
+        /* Install prompt */
+        .install-prompt {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            z-index: 1000;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .install-prompt.show {
+            transform: translateY(0);
+        }
+        
+        .install-prompt button {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            margin: 5px;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 400px) {
+            .header h1 {
+                font-size: 1.3em;
+            }
+            
+            .tab {
+                font-size: 0.75em;
+                padding: 12px 3px;
+            }
+            
+            .item-title {
+                font-size: 0.95em;
+            }
+            
+            .item-details {
+                font-size: 0.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Install Prompt (iOS) -->
+    <div id="installPrompt" class="install-prompt">
+        <p style="margin-bottom: 10px;"><strong>📱 Add to Home Screen</strong></p>
+        <p style="font-size: 0.9em; margin-bottom: 10px;">
+            Tap <svg width="16" height="16" fill="currentColor" style="vertical-align: middle;"><path d="M8 2.5L8 11M8 2.5L5 5.5M8 2.5L11 5.5"/><rect y="13" width="16" height="1.5"/></svg> then "Add to Home Screen" for app-like experience
+        </p>
+        <button onclick="closeInstallPrompt()">Got it</button>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>🎯 6-Week Health Reset</h1>
+            <p>Protein • Thyroid • Energy • Recovery</p>
+            
+            <div class="streak-counter">
+                <div>Current Streak</div>
+                <span class="streak-number" id="streakNumber">0</span>
+                <div>days completed</div>
+            </div>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('daily')">📋 Daily</button>
+            <button class="tab" onclick="showTab('shopping')">🛒 Shopping</button>
+            <button class="tab" onclick="showTab('overview')">📅 Guide</button>
+        </div>
+        
+        <!-- DAILY CHECKLIST TAB -->
+        <div id="daily" class="tab-content active">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar" style="width: 0%">0%</div>
+            </div>
+            
+            <div class="section-header">☀️ Morning (10 min)</div>
+            
+            <div class="checklist-item" data-id="morning1">
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" class="checkbox" onchange="updateProgress()">
+                </div>
+                <div class="item-content">
+                    <div class="item-title">
+                        Step outside for 10 minutes
+                        <span class="priority medium">MED</span>
+                    </div>
+                    <div class="item-details">
+                        Before screens. Get natural light with coffee/tea. Helps thyroid & mood.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="checklist-item" data-id="morning2">
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" class="checkbox" onchange="updateProgress()">
+                </div>
+                <div class="item-content">
+                    <div class="item-title">
+                        Huel Black Shake #1
+                        <span class="priority critical">CRITICAL</span>
+                    </div>
+                    <div class="item-details">
+                        <strong>400ml water + 2 scoops = 40g protein</strong><br>
+                        Not optional. Even if not hungry. This is medicine.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="checklist-item" data-id="morning3">
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" class="checkbox" onchange="updateProgress()">
+                </div>
+                <div class="item-content">
+                    <div class="item-title">
+                        Morning supplements
+                        <span class="priority high">HIGH</span>
+                    </div>
+                    <div class="item-details">
+                        • Vitamin D3 + K2<br>
+                        • Omega-3 (2 caps)<br>
+                        • B-Complex<br>
+                        • Selenium (200mcg)
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section-header">🌤️ Midday (5 min)</div>
+            
+            <div class="checklist-item" data-id="midday1">
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" class="checkbox" onchange="updateProgress()">
+                </div>
+                <div class="item-content">
+                    <div class="item-title">
+                        Lunch with protein
+                        <span class="priority critical">CRITICAL</span>
+                    </div>
+                    <div class="item-details">
+                        <strong>Min 30g protein:</strong> Chicken (35g), Salmon (40g), Tuna tin (25g), 3 eggs (18g). Whatever's easiest.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="checklist-item" data-id="midday2">
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" class="checkbox" onchange="updateProgress()">
+                </div>
+                <div class="item-content">
+                    <div class="item-title">
+                        Take Zinc with food
+                        <span class="priority medium">MED</span>
+                    </div>
+                    <div class="item-details">
+                        With food to avoid nausea. Supports testosterone.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section-header">🌆 Afternoon (5 min)</div>
+            
+            <div class="checklist-item" data-id="afternoon1">
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" class="checkbox" onchange="updateProgress()">
+                </div>
+                <div class="item-content">
+                    <div class="item-title">
+                        Huel Black Shake #2
+                        <span class="priority critical">CRITICAL</span>
+                    </div>
+                    <div class="item-details">
+                        <strong>400ml water + 2 scoops = 40g protein</strong><br>
+                        3-4pm ideal. Gets you to 80g+ before dinner.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="checklist-item" data-id="afternoon2">
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" class="checkbox" onchange="updateProgress()">
+                </div>
+                <div class="item-content">
+                    <div class="item-title">
+                        Drink 500ml water
+                        <span class="priority medium">MED</span>
+                    </div>
+                    <div class="item-details">
+                        Aim for 2-3L total daily.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section-header">🌙 Evening (15 min)</div>
+            
+            <div class="checklist-item" data-id="evening1">
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" class="checkbox" onchange="updateProgress()">
+                </div>
+                <div class="item-content">
+                    <div class="item-title">
+                        Dinner with protein
+                        <span class="priority high">HIGH</span>
+                    </div>
+                    <div class="item-details">
+                        <strong>Target: 30-40g protein</strong><br>
+                        Fish, turkey, lentils + veg if possible.<br>
+                        <em>Daily total: 150g minimum</em>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="checklist-item" data-id="evening2">
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" class="checkbox" onchange="updateProgress()">
+                </div>
+                <div class="item-content">
+                    <div class="item-title">
+                        Evening supplements
+                        <span class="priority high">HIGH</span>
+                    </div>
+                    <div class="item-details">
+                        • Magnesium glycinate (300-400mg)<br>
+                        • CoQ10 (optional)
+                    </div>
+                </div>
+            </div>
+            
+            <div class="checklist-item" data-id="evening3">
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" class="checkbox" onchange="updateProgress()">
+                </div>
+                <div class="item-content">
+                    <div class="item-title">
+                        Screens off 30min before bed
+                        <span class="priority medium">MED</span>
+                    </div>
+                    <div class="item-details">
+                        Helps sleep. Read, music, whatever. No scrolling.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section-header">💪 Weekly Exercise</div>
+            
+            <div class="checklist-item" data-id="exercise1">
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" class="checkbox" onchange="updateProgress()">
+                </div>
+                <div class="item-content">
+                    <div class="item-title">
+                        Saturday workout (20-30 min)
+                        <span class="priority medium">MED</span>
+                    </div>
+                    <div class="item-details">
+                        At home: Push-ups 3x8-12, Squats 3x15, Plank 3x30sec. Rest between sets.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <strong>📊 Protein Tracking:</strong>
+                Download MyFitnessPal and track for first week. Aim for 150g daily minimum.
+            </div>
+            
+            <button class="button reset" onclick="resetDaily()">🔄 Reset Today</button>
+            <button class="button complete" onclick="completeDay()">✓ Mark Day Complete</button>
+        </div>
+        
+        <!-- SHOPPING LIST TAB -->
+        <div id="shopping" class="tab-content">
+            <div class="section-header">🛒 Shopping List</div>
+            <p style="margin-bottom: 15px; color: #666; font-size: 0.9em;">Everything you need. Total: ~£80-120</p>
+            
+            <div class="shopping-category">
+                <h3>🥤 Protein (PRIORITY)</h3>
+                <ul>
+                    <li><strong>Huel Black Edition</strong> (2 bags minimum)</li>
+                    <li>Vanilla or Berry flavor</li>
+                    <li>Each bag = ~17 servings</li>
+                    <li><em>Budget: £45-50</em></li>
+                </ul>
+            </div>
+            
+            <div class="shopping-category">
+                <h3>💊 New Supplements</h3>
+                <ul>
+                    <li><strong>B-Complex with B12</strong> (1000mcg B12 min)</li>
+                    <li><strong>Selenium</strong> (200mcg)</li>
+                    <li>Brands: Nutravita, Solgar, Cytoplan</li>
+                    <li><em>Budget: £15-20 total</em></li>
+                </ul>
+            </div>
+            
+            <div class="shopping-category">
+                <h3>💊 Continue (You Have)</h3>
+                <ul>
+                    <li>Vitamin D3 + K2</li>
+                    <li>Magnesium glycinate</li>
+                    <li>Omega-3 (EPA/DHA)</li>
+                    <li>Zinc</li>
+                    <li>CoQ10 (optional)</li>
+                </ul>
+            </div>
+            
+            <div class="shopping-category">
+                <h3>🍗 Weekly Protein</h3>
+                <ul>
+                    <li>Chicken breasts (4-5)</li>
+                    <li>Salmon/fish (2-3 fillets)</li>
+                    <li>Greek yogurt (2-3 pots)</li>
+                    <li>Eggs (12-18)</li>
+                    <li>Tins of tuna (3-4)</li>
+                    <li><em>Whatever's on sale works</em></li>
+                </ul>
+            </div>
+            
+            <div class="shopping-category">
+                <h3>🥗 Easy Sides</h3>
+                <ul>
+                    <li>Microwave rice pouches</li>
+                    <li>Frozen veg bags</li>
+                    <li>Pre-washed salad</li>
+                    <li>Bananas</li>
+                    <li>Oats</li>
+                </ul>
+            </div>
+            
+            <div class="shopping-category">
+                <h3>📱 Apps (Free)</h3>
+                <ul>
+                    <li><strong>MyFitnessPal</strong></li>
+                    <li>For tracking protein first week</li>
+                </ul>
+            </div>
+            
+            <div class="info-box">
+                <strong>💰 Money-Saving:</strong>
+                Huel = cheaper per serving. Buy frozen protein. Tuna tins = emergency backup. Amazon supplements (Nutravita) = good + affordable.
+            </div>
+        </div>
+        
+        <!-- WEEKLY OVERVIEW TAB -->
+        <div id="overview" class="tab-content">
+            <div class="section-header">📅 6-Week Timeline</div>
+            
+            <div class="week-overview">
+                <h3>Week 1-2: Foundation</h3>
+                <ul>
+                    <li><strong>Hit 150g protein daily</strong> (non-negotiable)</li>
+                    <li>Start new supplements (B-complex, Selenium)</li>
+                    <li><strong>Reduce Wegovy dose</strong> (drop one level)</li>
+                    <li>Track protein in MyFitnessPal for 7 days</li>
+                    <li>Try for 1-2 workouts</li>
+                    <li>Focus: Building habit, hitting targets</li>
+                </ul>
+            </div>
+            
+            <div class="week-overview">
+                <h3>Week 3-4: Stabilization</h3>
+                <ul>
+                    <li>Continue hitting protein (easier now)</li>
+                    <li>Notice: More energy, better mood</li>
+                    <li>Aim for 2 workouts/week minimum</li>
+                    <li>Check: Sleeping better? Libido?</li>
+                    <li>Continue reduced Wegovy</li>
+                    <li>Focus: Consistency, small wins</li>
+                </ul>
+            </div>
+            
+            <div class="week-overview">
+                <h3>Week 5-6: Assessment</h3>
+                <ul>
+                    <li>Continue all habits</li>
+                    <li><strong>Book repeat blood test</strong> (end of week 6)</li>
+                    <li>Assess: Energy? Mood? Libido?</li>
+                    <li>Document what's better vs. struggling</li>
+                    <li>Decide: Need thyroid medication?</li>
+                    <li>Focus: Evaluation & next steps</li>
+                </ul>
+            </div>
+            
+            <div class="info-box">
+                <strong>🎯 After 6 Weeks:</strong><br><br>
+                <strong>Best:</strong> Energy up 50-70%, mood better, libido returning, FT4 normal. Keep going!<br><br>
+                <strong>Likely:</strong> Energy up 30-50%, mood improved, FT4 better but borderline. Consider thyroid meds.<br><br>
+                <strong>Worst:</strong> Minimal change, FT4 still low. Definitely need levothyroxine.
+            </div>
+            
+            <div class="section-header">📋 Week 6 Retest</div>
+            <p style="margin: 15px 0; color: #666; font-size: 0.9em;">Book private blood test (Medichecks/Thriva/Bluecrest) for:</p>
+            <ul style="padding-left: 30px; color: #666; line-height: 1.8; font-size: 0.9em;">
+                <li>Thyroid (TSH + FT4)</li>
+                <li>Testosterone (Total + Free)</li>
+                <li>Vitamin D</li>
+                <li>Optional: Liver function</li>
+            </ul>
+            
+            <div class="info-box" style="background: #d1ecf1; border-color: #0c5460; margin-top: 20px;">
+                <strong style="color: #0c5460;">💬 Bad Day?</strong><br>
+                Depression makes consistency hard. If you miss:<br>
+                • Don't restart from zero<br>
+                • Minimum: Get 2 Huel shakes in<br>
+                • Everything else is bonus<br>
+                • Tomorrow is new. You've got this.
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed'));
+        }
+        
+        // Show install prompt for iOS
+        function showInstallPrompt() {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            const isStandalone = window.navigator.standalone === true;
+            const hasSeenPrompt = localStorage.getItem('hasSeenInstallPrompt');
+            
+            if (isIOS && !isStandalone && !hasSeenPrompt) {
+                setTimeout(() => {
+                    document.getElementById('installPrompt').classList.add('show');
+                }, 2000);
+            }
+        }
+        
+        function closeInstallPrompt() {
+            document.getElementById('installPrompt').classList.remove('show');
+            localStorage.setItem('hasSeenInstallPrompt', 'true');
+        }
+        
+        // Load saved data
+        let streak = parseInt(localStorage.getItem('healthStreak')) || 0;
+        let lastCompleted = localStorage.getItem('lastCompleted');
+        let checkboxStates = JSON.parse(localStorage.getItem('checkboxStates')) || {};
+        
+        // Initialize
+        document.getElementById('streakNumber').textContent = streak;
+        loadCheckboxStates();
+        updateProgress();
+        showInstallPrompt();
+        
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Scroll to top when switching tabs
+            window.scrollTo(0, 0);
+        }
+        
+        function updateProgress() {
+            const checkboxes = document.querySelectorAll('.checkbox');
+            const checked = document.querySelectorAll('.checkbox:checked').length;
+            const total = checkboxes.length;
+            const percentage = Math.round((checked / total) * 100);
+            
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = percentage + '%';
+            progressBar.textContent = percentage + '%';
+            
+            checkboxes.forEach(checkbox => {
+                const item = checkbox.closest('.checklist-item');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+            
+            saveCheckboxStates();
+        }
+        
+        function saveCheckboxStates() {
+            const states = {};
+            document.querySelectorAll('.checklist-item').forEach(item => {
+                const id = item.dataset.id;
+                const checked = item.querySelector('.checkbox').checked;
+                states[id] = checked;
+            });
+            localStorage.setItem('checkboxStates', JSON.stringify(states));
+        }
+        
+        function loadCheckboxStates() {
+            const states = JSON.parse(localStorage.getItem('checkboxStates')) || {};
+            document.querySelectorAll('.checklist-item').forEach(item => {
+                const id = item.dataset.id;
+                if (states[id]) {
+                    item.querySelector('.checkbox').checked = true;
+                    item.classList.add('completed');
+                }
+            });
+        }
+        
+        function resetDaily() {
+            if (confirm('Reset today\'s checklist? (Won\'t affect streak)')) {
+                document.querySelectorAll('.checkbox').forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                updateProgress();
+                saveCheckboxStates();
+            }
+        }
+        
+        function completeDay() {
+            const today = new Date().toDateString();
+            
+            if (lastCompleted === today) {
+                alert('Already marked today complete! Great job! 🎉');
+                return;
+            }
+            
+            const checkboxes = document.querySelectorAll('.checkbox');
+            const checked = document.querySelectorAll('.checkbox:checked').length;
+            const percentage = (checked / checkboxes.length) * 100;
+            
+            if (percentage < 70) {
+                if (!confirm(`Only ${Math.round(percentage)}% complete. Mark anyway?`)) {
+                    return;
+                }
+            }
+            
+            streak++;
+            localStorage.setItem('healthStreak', streak);
+            localStorage.setItem('lastCompleted', today);
+            document.getElementById('streakNumber').textContent = streak;
+            
+            let message = 'Day complete! 🎉\n\n';
+            if (streak === 1) message += 'First day done - huge! 💪';
+            else if (streak === 7) message += 'ONE WEEK! Real momentum! 🔥';
+            else if (streak === 14) message += 'TWO WEEKS! Feeling different? 🌟';
+            else if (streak === 21) message += 'THREE WEEKS! Habits forming! 🚀';
+            else if (streak === 42) message += 'SIX WEEKS! Time to retest! 🎯';
+            else message += `${streak} days! Amazing! ⭐`;
+            
+            alert(message);
+            
+            document.querySelectorAll('.checkbox').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            updateProgress();
+            saveCheckboxStates();
+        }
+        
+        function checkStreakIntegrity() {
+            if (lastCompleted) {
+                const lastDate = new Date(lastCompleted);
+                const today = new Date();
+                const daysDiff = Math.floor((today - lastDate) / (1000 * 60 * 60 * 24));
+                
+                if (daysDiff > 2) {
+                    const resetStreak = confirm(
+                        `Missed ${daysDiff} days. Reset streak? (You can keep it - life happens!)`
+                    );
+                    
+                    if (resetStreak) {
+                        streak = 0;
+                        localStorage.setItem('healthStreak', streak);
+                        document.getElementById('streakNumber').textContent = streak;
+                    }
+                }
+            }
+        }
+        
+        checkStreakIntegrity();
+    </script>
+</body>
+</html>
