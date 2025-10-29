@@ -2,7 +2,7 @@
   "name": "Health Reset - 6 Week Plan",
   "short_name": "Health Reset",
   "description": "6-week health recovery plan with daily checklist and streak tracking",
-  "start_url": "./index.html",
+  "start_url": "/health-reset/",
   "scope": "./",
   "display": "standalone",
   "background_color": "#667eea",
