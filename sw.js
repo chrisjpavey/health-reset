@@ -1,8 +1,8 @@
 const CACHE_NAME = 'health-reset-v1';
 const urlsToCache = [
-  './',
-  './index.html',
-  './manifest.json'
+  '/health-reset/',
+  '/health-reset/index.html',
+  '/health-reset/manifest.json'
 ];
 
 self.addEventListener('install', event => {
